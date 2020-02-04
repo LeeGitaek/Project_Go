@@ -132,6 +132,133 @@ func main() {
 		}
 	*/
 
+	yum := 4
+	//switch num := number(); { //num is not a constant
+	switch yum { // it's possible to put multiple expressions in case
+	case 1:
+		fmt.Println("it's 1")
+	case 2:
+		fmt.Println("it's 2")
+	case 3:
+		fmt.Println("it's 3")
+	case 4:
+		fmt.Println("correct")
+	default:
+		fmt.Println("none")
+	}
+
+	var arr [3]int // array length 3
+	arr[0] = 2
+	arr[1] = 3
+	arr[2] = 4
+	fmt.Println(arr)
+	fmt.Println("arr len = ", len(arr))
+	//a := [...]int{12, 78, 50} // ... makes the compiler determine the length
+	ar := [3]int{12}
+	fmt.Println(ar)
+
+	y := [3][2]string{
+		{"lion", "tiger"},
+		{"cat", "dog"},
+		{"pigeon", "peacock"}, //this comma is necessary. The compiler will complain if you omit this comma
+	}
+	printarray(y)
+	var k [3][2]string
+	k[0][0] = "apple"
+	k[0][1] = "samsung"
+	k[1][0] = "microsoft"
+	k[1][1] = "google"
+	k[2][0] = "AT&T"
+	k[2][1] = "T-Mobile"
+	fmt.Printf("\n")
+	printarray(k)
+	/*
+		slice using golang
+
+		  a := [5]int{76, 77, 78, 79, 80}
+		    var b []int = a[1:4] //creates a slice from a[1] to a[3]
+		    fmt.Println(b)
+
+	*/
+	darr := [...]int{57, 89, 90, 82, 100, 78, 67, 69, 59}
+	dslice := darr[2:5]
+	fmt.Println("array before", darr)
+	for i := range dslice {
+		dslice[i]++
+		// index + 1 from 2 to 4
+	}
+	fmt.Println("array after", darr)
+
+	cars := []string{"Ferrari", "Honda", "Ford"}
+	fmt.Println("cars:", cars, "has old length", len(cars), "and capacity", cap(cars)) //capacity of cars is 3
+	cars = append(cars, "Toyota")
+	fmt.Println("cars:", cars, "has new length", len(cars), "and capacity", cap(cars)) //capacity of cars is doubled to 6
+
+	veggies := []string{"potatoes", "tomatoes", "brinjal"}
+	fruits := []string{"oranges", "apples"}
+	food := append(veggies, fruits...)
+	fmt.Println("food:", food)
+
+	//How to create a map?
+
+	//personSalary := make(map[string]int)
+	personSalary := make(map[string]int)
+	if personSalary == nil {
+		fmt.Println("map is nil . going to make one.")
+		personSalary = make(map[string]int)
+	}
+	personSalary = make(map[string]int)
+	personSalary["steve"] = 12000
+	personSalary["mike"] = 15000
+	personSalary["richard"] = 90000
+	fmt.Println("salary contents of map", personSalary)
+
+	/*
+		it's also allowed the way.
+
+		personSalary := map[string]int {
+		        "steve": 12000,
+		        "jamie": 15000,
+		    }
+		    personSalary["mike"] = 9000
+		    fmt.Println("personSalary map contents:", personSalary)
+
+
+		how to delete element of map >
+			delete(personSalary, "steve")
+
+		length of the map >
+			len(personSalary)
+
+	*/
+	map1 := map[string]int{
+		"one": 1,
+		"two": 2,
+	}
+
+	map2 := map1
+
+	if map1["one"] == map2["one"] && map1["two"] == map2["two"] {
+		fmt.Println("map1 is equal to map2")
+	} else {
+		fmt.Println("map1 is not equal to map2")
+	}
+
+	/*
+		map1 := map[string]int{
+		        "one": 1,
+		        "two": 2,
+		    }
+
+		    map2 := map1
+
+		    if map1 == map2 {
+		    }
+
+		map comparison code is not working its like this.
+
+	*/
+
 }
 
 /* sum function , */
@@ -161,3 +288,11 @@ func init(){
 
 }
 */
+func printarray(a [3][2]string) {
+	for _, v1 := range a {
+		for _, v2 := range v1 {
+			fmt.Printf("%s ", v2)
+		}
+		fmt.Printf("\n")
+	}
+}

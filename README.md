@@ -1,2 +1,2 @@
-# Parallel_Processing_Go
-Parallel_Processing using go lang
+# Basic project_Go
+Basic project using go lang

@@ -5,6 +5,8 @@ import "fmt"
 //The "fmt" package is imported and it will be used inside the main function to print text to the standard output.
 import "math"
 import "unsafe"
+import "time"
+import "sync"
 
 /*
 What kind of variable type?
@@ -48,6 +50,18 @@ type Empl struct {
 	currency string
 }
 type myInt int
+
+/*
+
+What is an interface?
+The general definition of an interface in the Object oriented world is "interface defines the behaviour of an object".
+메서드들의 집합체라고 할 수 있음.
+interface는 타입이 구현해야 되는 메서드 원형들을 정의한다.
+
+*/
+type VowelsFinder interface {
+	FindVowels() []rune
+}
 
 func (a myInt) add(b myInt) myInt {
 	return a + b
@@ -423,6 +437,72 @@ func main() {
 	sum := num1.add(num2)
 	fmt.Println("Sum is", sum)
 
+	/* Interface code is at the top of code. */
+
+	/* Concurrency in Go */
+	/*
+		Concurrency means multiple computations are happening at the same time.
+		Concurrency is an inherent part of the Go programming language.
+		Concurrency is the capability to deal with lots of things at once. It's best explained with an example.
+	*/
+
+	/*
+		What are Goroutines?
+
+		Goroutines are functions or methods that run concurrently with other functions or methods.
+		Goroutines can be thought of as light weight threads.
+		The cost of creating a Goroutine is tiny when compared to a thread.
+		Hence its common for Go applications to have thousands of Goroutines running concurrently.
+
+		This program only outputs the text main function.
+		What happened to the Goroutine we started?
+		We need to understand two main properties of go routines to understand why this happens.
+
+		When a new Goroutine is started, the goroutine call returns immediately. Unlike functions, the control does not wait for the Goroutine to finish executing. The control returns immediately to the next line of code after the Goroutine call and any return values from the Goroutine are ignored.
+		The main Goroutine should be running for any other Goroutines to run. If the main Goroutine terminates then the program will be terminated and no other Goroutine will run.
+	*/
+	go hi()
+	time.Sleep(1 * time.Second)
+	fmt.Println("main function")
+
+	var wait sync.WaitGroup
+	wait.Add(2)
+	// create wait group , waiting for 2 (go routine)
+
+	go func() {
+		defer wait.Done() // call Done() after the end.
+		fmt.Println("Hello World man yo !")
+	}()
+
+	go func(msg string) {
+		defer wait.Done() // call Done() after the end.
+		fmt.Println(msg)
+	}("Hi man")
+
+	wait.Wait() // wait until all routine be finished.
+
+	go numbers()
+	go alphabet()
+	time.Sleep(3000 * time.Millisecond)
+	fmt.Println("main terminated")
+}
+
+func numbers() {
+	for i := 1; i <= 5; i++ {
+		time.Sleep(250 * time.Millisecond)
+		fmt.Printf("%d\n", i)
+	}
+}
+
+func alphabet() {
+	for i := 'a'; i <= 'e'; i++ {
+		time.Sleep(400 * time.Millisecond)
+		fmt.Printf("%c\n", i)
+	}
+}
+
+func hi() {
+	fmt.Println("Hello world goroutine")
 }
 
 func modify(arr *[3]int) {

@@ -91,11 +91,11 @@ func (e Empl) displaySalary() {
     fmt.Println("final value of x", x)
 
 */
-var p = 0
+var oj = 0
 
 func increment(wg *sync.WaitGroup, m *sync.Mutex) {
 	m.Lock() // mutex lock
-	p = p + 1
+	oj = oj + 1
 	m.Unlock() // mutex unlock
 	wg.Done()
 }
@@ -599,7 +599,7 @@ func main() {
 		go increment(&w, &m)
 	}
 	w.Wait()
-	fmt.Println("final value of p", p)
+	fmt.Println("final value of oj", oj)
 
 	/*
 
@@ -613,8 +613,37 @@ func main() {
 
 	*/
 
+	/* 지연실행 defer */
+	/*
+		What is Defer?
+
+		Defer statement is used to execute a function call just before the function where the defer statement is present returns.
+		The definition might seem complex but it's pretty simple to understand by means of an example.
+	*/
+
+	numi := []int{78, 109, 2, 563, 300}
+	largest(numi)
+
+	/* Error Handling */
+	// import "errors"
+
 }
 
+func finished() {
+	fmt.Println("Finished finding largest")
+}
+
+func largest(nums []int) {
+	defer finished()
+	fmt.Println("Started finding largest")
+	max := nums[0]
+	for _, v := range nums {
+		if v > max {
+			max = v
+		}
+	}
+	fmt.Println("Largest number in", nums, "is", max)
+}
 func process(ch chan string) {
 	time.Sleep(15500 * time.Millisecond)
 	ch <- "process successful"

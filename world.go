@@ -461,8 +461,13 @@ func main() {
 		When a new Goroutine is started, the goroutine call returns immediately. Unlike functions, the control does not wait for the Goroutine to finish executing. The control returns immediately to the next line of code after the Goroutine call and any return values from the Goroutine are ignored.
 		The main Goroutine should be running for any other Goroutines to run. If the main Goroutine terminates then the program will be terminated and no other Goroutine will run.
 	*/
-	go hi()
-	time.Sleep(1 * time.Second)
+	done := make(chan bool)
+
+	fmt.Println("Main going to call hello go goroutine")
+	go hi(done)
+	<-done
+	fmt.Println("Main received data")
+	//time.Sleep(1 * time.Second)
 	fmt.Println("main function")
 
 	var wait sync.WaitGroup
@@ -485,6 +490,7 @@ func main() {
 	go alphabet()
 	time.Sleep(3000 * time.Millisecond)
 	fmt.Println("main terminated")
+	//1 a 2 3 b 4 c 5 d e
 
 	/*
 
@@ -494,6 +500,54 @@ func main() {
 		Similar to how water flows from one end to another in a pipe,
 		data can be sent from one end and received from the another end using channels.
 	*/
+
+	var lee chan int
+	if lee == nil {
+		fmt.Println("channel lee is nil , going to define it.")
+		lee = make(chan int)
+		fmt.Printf("Type of lee is  %T \n", lee)
+	}
+
+	/*
+
+		Sending and receiving from channel
+
+		The syntax to send and receive data from a channel are given below,
+
+		data := <- a // read from channel a
+		a <- data // write to channel a
+
+		for more information , you can see on the issue page.
+	*/
+	number := 589
+	sqrch := make(chan int)
+	cubech := make(chan int)
+
+	go calcSquares(number, sqrch)
+	go calcCubes(number, cubech)
+	squares, cubes := <-sqrch, <-cubech // read from channel sqrch, cubech
+	fmt.Println("Final output", squares+cubes)
+
+}
+
+func calcSquares(number int, squareop chan int) {
+	sum := 0
+	for number != 0 {
+		digit := number % 10
+		sum += digit * digit
+		number /= 10
+	}
+	squareop <- sum
+	//data write to channel squareop
+}
+func calcCubes(number int, cubeop chan int) {
+	sum := 0
+	for number != 0 {
+		digit := number % 10
+		sum += digit * digit * digit
+		number /= 10
+	}
+	cubeop <- sum
 }
 
 func numbers() {
@@ -510,8 +564,11 @@ func alphabet() {
 	}
 }
 
-func hi() {
-	fmt.Println("Hello world goroutine")
+func hi(done chan bool) {
+	fmt.Println("hello go routine is going to sleep")
+	time.Sleep(4 * time.Second)
+	fmt.Println("hello go routine awake and going to write to done")
+	done <- true // write to channel done
 }
 
 func modify(arr *[3]int) {

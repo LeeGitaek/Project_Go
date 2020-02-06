@@ -71,6 +71,36 @@ func (e Empl) displaySalary() {
 	fmt.Println("Salary of %s is %s%d", e.name, e.currency, e.salary)
 }
 
+/* mutex code party :) */
+// you can do implementation using channel ..
+/*
+	func increment(wg *sync.WaitGroup, ch chan bool) {
+    ch <- true
+    x = x + 1
+    <- ch
+    wg.Done()
+	}
+
+ 	var w sync.WaitGroup
+    ch := make(chan bool, 1)
+    for i := 0; i < 1000; i++ {
+        w.Add(1)
+        go increment(&w, ch)
+    }
+    w.Wait()
+    fmt.Println("final value of x", x)
+
+*/
+var p = 0
+
+func increment(wg *sync.WaitGroup, m *sync.Mutex) {
+	m.Lock() // mutex lock
+	p = p + 1
+	m.Unlock() // mutex unlock
+	wg.Done()
+}
+
+/* mutex code party over. :) */
 func main() {
 	//The main is a special function. The program execution starts from the main function.
 	var (
@@ -528,6 +558,66 @@ func main() {
 	squares, cubes := <-sqrch, <-cubech // read from channel sqrch, cubech
 	fmt.Println("Final output", squares+cubes)
 
+	/* select */
+
+	ch := make(chan string)
+	go process(ch)
+
+	for {
+		time.Sleep(1000 * time.Millisecond)
+		select {
+		case v := <-ch:
+			fmt.Println("received value: ", v)
+			return
+		default:
+			fmt.Println("no value received")
+		}
+	}
+	//x = 0
+	//sync.Mutex.Lock()
+	//x = x+1
+	//sync.Mutex.Unlock()
+	//
+
+	/*
+
+		var p  = 0
+
+		func increment(wg *sync.WaitGroup){
+			p = p+1
+			wg.Done()
+		}
+
+		at the top of code but it's below the structure
+	*/
+
+	var w sync.WaitGroup
+	var m sync.Mutex
+
+	for i := 0; i < 1000; i++ {
+		w.Add(1)
+		go increment(&w, &m)
+	}
+	w.Wait()
+	fmt.Println("final value of p", p)
+
+	/*
+
+		Mutex vs Channels
+
+		We have solved the race condition problem using both mutexes and channels.
+		So how do we decide what to use when.
+		The answer lies in the problem you are trying to solve.
+		If the problem you are trying to solve is a better fit for mutexes then go ahead and use mutex.
+		Do not hesitate to use mutex if needed. If the problem seems to be a better fit for channels, then use it :).
+
+	*/
+
+}
+
+func process(ch chan string) {
+	time.Sleep(15500 * time.Millisecond)
+	ch <- "process successful"
 }
 
 func calcSquares(number int, squareop chan int) {

@@ -20,6 +20,43 @@ rune
 string
 
 */
+
+/*
+---------------- structure ---------------
+What is a structure?
+A structure is a user defined type which represents a collection of fields. It can be used in places where it makes sense to group the data into a single unit rather than maintaining each of them as separate types.
+
+For instance a employee has a firstName, lastName and age. It makes sense to group these three properties into a single structure employee.
+*/
+type image struct {
+	data map[int]int
+}
+
+type Address struct {
+	city, state string
+}
+
+type Employee struct {
+	FirstName   string
+	LastName    string
+	age, salary int
+	address     Address
+}
+type Empl struct {
+	name     string
+	salary   int
+	currency string
+}
+type myInt int
+
+func (a myInt) add(b myInt) myInt {
+	return a + b
+}
+
+func (e Empl) displaySalary() {
+	fmt.Println("Salary of %s is %s%d", e.name, e.currency, e.salary)
+}
+
 func main() {
 	//The main is a special function. The program execution starts from the main function.
 	var (
@@ -259,6 +296,199 @@ func main() {
 
 	*/
 
+	/* String */
+
+	str := "Hello World"
+	fmt.Println(str)
+
+	printBytes(str)
+	printCharacters(str)
+
+	printChars(str)
+	printCharsAndBytes(str)
+
+	gu := "hello"
+	fmt.Println(mutate([]rune(gu)))
+
+	/* [Go] to Pointer */
+	/* A pointer is a variable which stores the memory address of another variable. */
+	number_b := 255
+	var number_a *int = &number_b
+
+	fmt.Printf("Type of a is %T\n", number_a) // Type of a is *int
+	fmt.Println("address of b is", number_a)  // 0xc0001341c8
+
+	ni := 25
+	var nb *int
+	if nb == nil {
+		// The zero value of a pointer is nil.
+		fmt.Println("b is ", nb) // b is nil
+		nb = &ni
+		fmt.Println("b after initialization is ", nb) // b after initialization is 0xc000016208
+
+	}
+	hum := hello()
+	fmt.Println("returning pointer from a function : result : = ", hum)
+	fmt.Println("returning pointer from a function : result : = ", *hum)
+	*hum++
+	fmt.Println("result+1 : = ", *hum)
+
+	test_arr := [3]int{90, 86, 94}
+	modify(&test_arr)
+	fmt.Println(test_arr) // [90 86 94] -> [90 86 10]
+
+	/* [Go] to Structure */
+	// structure code is at top of code. /|\
+	//									  |
+	/*
+
+		type Address struct {
+		    city, state string
+		}
+		type Employee struct{
+			FirstName 	  string
+			LastName  	  string
+			age,salary 	  int
+			address 	  Address
+		}
+	*/
+
+	emp1 := Employee{
+		FirstName: "Richard",
+		LastName:  "Lee",
+		age:       24,
+		salary:    500,
+	}
+	fmt.Println("emp1 : ", emp1) // emp1 :  {Richard Lee 24 500}
+	////zero valued structure is allowed.
+	//Employee 4 {  0 0}  <--- example
+
+	fmt.Println("emp1 firstname ->", emp1.FirstName)
+	fmt.Println("emp1 lastname ->", emp1.LastName)
+	fmt.Println("emp1 age ->", emp1.age)
+	fmt.Println("emp1 salary ->", emp1.salary)
+	//Accessing individual fields of a struct
+
+	emp8 := &Employee{"Sam", "Anderson", 55, 6000, Address{city: "LA", state: "CA"}}
+	fmt.Println("First Name:", (*emp8).FirstName)
+	fmt.Println("Age:", (*emp8).age)
+	/* Pointers to a struct
+	It is also possible to create pointers to a struct. */
+
+	var emp3 Employee
+	emp3.FirstName = "Justin"
+	emp3.LastName = "Bieber"
+	emp3.age = 26
+	emp3.salary = 500000000
+	emp3.address = Address{
+		city:  "Los Angeles",
+		state: "California",
+	}
+	fmt.Println("emp3 firstname ->", emp3.FirstName)
+	fmt.Println("emp3 lastname ->", emp3.LastName)
+	fmt.Println("emp3 age ->", emp3.age)
+	fmt.Println("emp3 salary ->", emp3.salary)
+	fmt.Println("emp3 address ->", emp3.address.city)
+	fmt.Println("emp3 address state ->", emp3.address.state)
+	/*
+		image1 := image{data: map[int]int{
+			0: 155,
+		}}
+		image2 := image{data: map[int]int{
+			0: 155,
+		}}
+
+		hence image1 and image2 cannot be compared.
+		If you run this program, compilation will fail with error
+	*/
+
+	/* Methods in Go  */
+
+	/*
+		func(t Type) function name(parameter list){
+
+		}
+	*/
+
+	//emp1.displaySalary()
+	emp5 := Empl{
+		name:     "Sam Adolf",
+		salary:   5000,
+		currency: "$",
+	}
+	emp5.displaySalary()
+
+	num1 := myInt(5)
+	num2 := myInt(10)
+	sum := num1.add(num2)
+	fmt.Println("Sum is", sum)
+
+}
+
+func modify(arr *[3]int) {
+	arr[2] = 10
+}
+
+//Returning pointer from a function
+func hello() *int {
+	i := 5
+	return &i
+}
+
+func mutate(g []rune) string {
+	runes := []rune(g)
+	runes[0] = 'a' //any valid unicode character within single quote is a rune
+	return string(runes)
+}
+
+func printBytes(s string) {
+	for i := 0; i < len(s); i++ {
+		//It's gonna be printed Unicode UT8-encoded values of "Hello World"
+		fmt.Printf("%x ", s[i])
+	}
+	fmt.Println(" ")
+}
+
+func printCharacters(s string) {
+	for i := 0; i < len(s); i++ {
+		fmt.Printf("%c", s[i])
+	}
+	fmt.Println(" ")
+}
+
+func printChars(s string) {
+	runes := []rune(s)
+	/*
+		A rune is a builtin type in Go and it's the alias of int32.
+		rune represents a Unicode code point in Go. It does not matter how many bytes the code point occupies,
+		it can be represented by a rune. Lets modify the above program to print characters using a rune.
+	*/
+	for i := 0; i < len(runes); i++ {
+		fmt.Printf("%c ", runes[i])
+	}
+	//H e l l o   W o r l d
+}
+
+func printCharsAndBytes(s string) {
+	fmt.Printf("\n")
+	for index, rune := range s {
+		fmt.Printf("%c starts at byte %d\n", rune, index)
+	}
+	/*
+		output
+
+		H starts at byte 0
+		e starts at byte 1
+		l starts at byte 2
+		l starts at byte 3
+		o starts at byte 4
+		  starts at byte 5
+		W starts at byte 6
+		o starts at byte 7
+		r starts at byte 8
+		l starts at byte 9
+		d starts at byte 10
+	*/
 }
 
 /* sum function , */

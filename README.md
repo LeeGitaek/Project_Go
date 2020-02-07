@@ -21,5 +21,5 @@ Basic project using go lang
 - Defer
 - Error Handling
 
-Issue #1 open/closed 
+Issue #1 open/closed  <br>
 Issue #2 open/closed

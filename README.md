@@ -1,6 +1,6 @@
 # Basic project_Go
 Basic project using go lang
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/LeeGitaek/Project_Go)](https://goreportcard.com/report/github.com/LeeGitaek/Project_Go)
 
 - variable type
 - function structure
